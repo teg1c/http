@@ -1,0 +1,19 @@
+{
+    "name": "tegic/http",
+    "description": "http",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "tegic",
+            "email": "35350826@qq.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": { 
+    "psr-4": {
+      "tegic\\": "src/"
+    }
+  }
+}
