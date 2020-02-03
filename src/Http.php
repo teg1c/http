@@ -106,7 +106,7 @@ class Http {
 		if ( $no ){
 			// var_dump(curl_error($ch));
 			// echo curl_getinfo($ch,CURLINFO_HTTP_CODE); 
-			throw new RuntimeException(curl_error($ch));
+			throw new \RuntimeException(curl_error($ch));
 			return false;
 		}else{
 			if ( $charset ) {
