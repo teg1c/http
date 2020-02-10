@@ -4,8 +4,5 @@
 
 ## 用法
 
-``
-
 composer require tegic/http
 
-``
