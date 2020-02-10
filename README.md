@@ -5,5 +5,5 @@
 ## 用法
 
 ``
-直接看 src/Http.php 源码
+composer require tegic/http
 ``
