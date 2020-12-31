@@ -63,9 +63,16 @@ class Http
      * @param $key
      * @param $value
      */
-    public function header($key, $value)
+    public function header($key, $value = null)
     {
-        $this->set_head[$key] = $value;
+        if (is_array($key)) {
+            foreach ($key as $k=>$v){
+                $this->set_head[$k] = $v;
+            }
+        }else{
+            $this->set_head[$key] = $value;
+        }
+
     }
 
     /**
