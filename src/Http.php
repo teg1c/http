@@ -9,6 +9,8 @@ class Http
     private $set_head = array();
     private $head = '';
 
+    protected $redirect = true;
+    protected $responseCode = null;
     public function __construct()
     {
     }
@@ -24,6 +26,16 @@ class Http
         return $this;
     }
 
+    public function setRedirect($bool = false)
+    {
+        $this->redirect = $bool;
+        return $this;
+    }
+
+    public function getResponseStatusCode()
+    {
+        return $this->responseCode;
+    }
     /**
      * post body
      * @param $key
@@ -127,9 +139,9 @@ class Http
         $no = curl_errno($ch);
 
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
+        $this->responseCode = $http_code;
         // 解决安全模式下的问题
-        if ($http_code == 301 || $http_code == 302) {
+        if ($this->redirect && ($http_code == 301 || $http_code == 302)) {
             if ($a = strpos($this->head, 'Location:')) {
                 $url = substr($this->head, $a + 9);
                 $url = substr($url, 0, strpos($url, "\r\n"));
@@ -140,12 +152,8 @@ class Http
             }
         }
 
-
         if ($no) {
-            // var_dump(curl_error($ch));
-            // echo curl_getinfo($ch,CURLINFO_HTTP_CODE);
             throw new \RuntimeException(curl_error($ch));
-            return false;
         } else {
             if ($charset) {
                 $code = @mb_detect_encoding($html, array('UTF-8', 'GBK', 'gb2312'));
