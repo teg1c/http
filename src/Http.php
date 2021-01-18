@@ -8,6 +8,7 @@ class Http
     private $set = array();
     private $set_head = array();
     private $head = '';
+    private $timeout = 3;
 
     protected $redirect = true;
     protected $responseCode = null;
@@ -26,6 +27,11 @@ class Http
         return $this;
     }
 
+    public function setTimeout($time = 3)
+    {
+        $this->timeout = $time;
+        return $this;
+    }
     public function setRedirect($bool = false)
     {
         $this->redirect = $bool;
@@ -120,7 +126,7 @@ class Http
         }
 
         curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_HEADERFUNCTION, array($this, 'httpHeaderCallback'));
         curl_setopt($ch, CURLOPT_HEADER, false);
         curl_setopt($ch, CURLOPT_NOBODY, false);
