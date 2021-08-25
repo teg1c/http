@@ -9,11 +9,14 @@ class Http
     private $set_head = array();
     private $head = '';
     private $timeout = 3;
+    private $baseUri = '';
 
     protected $redirect = true;
     protected $responseCode = null;
-    public function __construct()
+
+    public function __construct($params = [])
     {
+        array_key_exists('base_uri', $params) && $this->baseUri = $params['base_uri'];
     }
 
     /**
@@ -27,21 +30,57 @@ class Http
         return $this;
     }
 
+    /**
+     * reset post
+     * @return $this
+     */
+    public function resetPost()
+    {
+        $this->post = array();
+        return $this;
+    }
+
+    /**
+     * reset head
+     * @return $this
+     */
+    public function resetHead()
+    {
+        $this->head = '';
+        return $this;
+    }
+
+    /**
+     * set timeout
+     * @param int $time
+     * @return $this
+     */
     public function setTimeout($time = 3)
     {
         $this->timeout = $time;
         return $this;
     }
+
+    /**
+     * reset redirect
+     * @param false $bool
+     * @return $this
+     */
     public function setRedirect($bool = false)
     {
         $this->redirect = $bool;
         return $this;
     }
 
+    /**
+     * get response status code
+     * @return null
+     */
     public function getResponseStatusCode()
     {
         return $this->responseCode;
     }
+
     /**
      * post body
      * @param $key
@@ -52,9 +91,9 @@ class Http
     {
         if ($key === true || is_string($key)) {
             $this->post = $key;
-        } else if ($key === null && $value === false) {
+        } elseif ($key === null && $value === false) {
             $this->post = array();
-        } else if ($value === false) {
+        } elseif ($value === false) {
             foreach ($key as $k => $v) {
                 $this->post[$k] = $v;
             }
@@ -72,13 +111,12 @@ class Http
     public function header($key, $value = null)
     {
         if (is_array($key)) {
-            foreach ($key as $k=>$v){
+            foreach ($key as $k => $v) {
                 $this->set_head[$k] = $v;
             }
-        }else{
+        } else {
             $this->set_head[$key] = $value;
         }
-
     }
 
     /**
@@ -105,13 +143,14 @@ class Http
     }
 
     /**
-     * 抓取内容
+     * get html
      * @param $url
      * @param bool $charset
      * @return bool|string|string[]
      */
-    public function connect($url, $charset = false)
+    public function connect($url = '', $charset = false)
     {
+        $url == '' && $url = $this->baseUri;
         $header = array();
         $header[] = "Accept: text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5";
         $header[] = "Accept-Charset: utf-8;q=0.7,*;q=0.7";
@@ -133,7 +172,7 @@ class Http
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_AUTOREFERER, true);
         //curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        $this->redirect && curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
+        $this->redirect && curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 5.2) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.122 Safari/534.30');
@@ -160,6 +199,7 @@ class Http
                 $url = substr($this->head, $a + 9);
                 $url = substr($url, 0, strpos($url, "\r\n"));
                 $url = trim($url);
+                strpos($url, 'http') === false && $url = $this->baseUri . $url;
                 $this->post = array();
                 $this->head = '';
                 return $this->connect($url, $charset);
@@ -180,7 +220,6 @@ class Http
         }
 
         curl_close($ch);
-
     }
 
     /**
