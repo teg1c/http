@@ -11,6 +11,10 @@ use tegic\Traits\ClientTrait;
 class Http
 {
     use ClientTrait;
+    public function __construct()
+    {
+        $this->setHasSelfSignedCertificate(true);
+    }
 
     public function request(string $method, string $uri, HttpOptions|array $options = []): HttpResponse
     {
@@ -42,5 +46,20 @@ class Http
         curl_close($CurlHandle);
 
         return $result;
+    }
+    /**
+     * Set has self-signed certificate
+     *
+     * This is used to set the curl option CURLOPT_SSL_VERIFYPEER
+     * and CURLOPT_SSL_VERIFYHOST to false. This is useful when you are
+     * in local environment, or you have self-signed certificate.
+     *
+     * @param bool $has
+     *
+     * @return void
+     */
+    public function setHasSelfSignedCertificate(bool $has): void
+    {
+        putenv('HAS_SELF_SIGNED_CERT='.($has ? 'true' : 'false'));
     }
 }
