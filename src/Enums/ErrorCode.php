@@ -3,10 +3,8 @@
 
 namespace tegic\Enums;
 
-
 class ErrorCode
 {
-
     public static array $messages = [
         1 => 'CURLE_UNSUPPORTED_PROTOCOL',
         2 => 'CURLE_FAILED_INIT',
@@ -96,5 +94,4 @@ class ErrorCode
     {
         return self::$messages[$code] ?? 'UNKNOWN_ERROR';
     }
-
 }

@@ -3,7 +3,6 @@
 
 namespace tegic\Model;
 
-
 class ProxyServer
 {
 
@@ -93,5 +92,4 @@ class ProxyServer
     {
         return !empty($this->username) && !empty($this->password) ? "$this->username:$this->password" : null;
     }
-
 }
